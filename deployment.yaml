@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-taint-preserver
+  namespace: default
+  labels:
+    app: node-taint-preserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-taint-preserver
+  template:
+    metadata:
+      labels:
+        app: node-taint-preserver
+    spec:
+      serviceAccountName: node-taint-preserver-sa
+      containers:
+        - name: node-taint-preserver
+          image: node-taint-preserver:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: RUST_LOG
+              value: "info,kube=warn"
+            - name: CONFIGMAP_NAMESPACE
+              value: "default"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+
